@@ -16,6 +16,7 @@ DB_NAME="${POSTGRES_DB:=newsletter}"
 DB_PORT="${POSTGRES_PORT:=5432}"
 DB_HOST="${POSTGRES_HOST:=localhost}"
 
+if [[ -z "${SKIP_DOCKER}" ]]; then
 docker run \
     -e POSTGRES_USER=${DB_USER} \
     -e POSTGRES_PASSWORD=${DB_PASSWORD} \
@@ -23,7 +24,14 @@ docker run \
     -p "${DB_PORT}":5432 \
     -d postgres \
     postgres -N 1000
+fi
 
-DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
+export PGPASSWORD="${DB_PASSWORD}"
+
+>&2 echo "Postgress is up and running on port ${DB_PORT} - running migrations now"
+
+DATABASE_URL="postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}"
 export DATABASE_URL
+
 sqlx database create
+sqlx migrate run
