@@ -4,7 +4,7 @@ set -eo pipefail
 
 if ! [ -x "$(command -v sqlx)" ]; then
     echo >&2 "Error sqlx is not installed."
-    echo >&2 "Use: "
+    echo > "Use: "
     echo >&2 "cargo install -f --git https://github.com/launchbadge/sqlx sqlx-cli"
     echo >&2 "to install it"
     exit 1
